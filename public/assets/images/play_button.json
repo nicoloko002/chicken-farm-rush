@@ -1,0 +1,73 @@
+{
+    "frames": [{
+        "filename": "out",
+        "frame": {
+            "x": 0,
+            "y": 0,
+            "w": 384,
+            "h": 256
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 384,
+            "h": 256
+        },
+        "sourceSize": {
+            "w": 384,
+            "h": 256
+        }
+    }, {
+        "filename": "over",
+        "frame": {
+            "x": 0,
+            "y": 256,
+            "w": 384,
+            "h": 256
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 384,
+            "h": 256
+        },
+        "sourceSize": {
+            "w": 384,
+            "h": 256
+        }
+    }, {
+        "filename": "down",
+        "frame": {
+            "x": 0,
+            "y": 512,
+            "w": 384,
+            "h": 256
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 384,
+            "h": 256
+        },
+        "sourceSize": {
+            "w": 384,
+            "h": 256
+        }
+    }],
+    "meta": {
+        "app": "https://www.leshylabs.com/apps/sstool/",
+        "version": "Leshy SpriteSheet Tool v0.8.4",
+        "image": "botao_jogar.png",
+        "size": {
+            "w": 384,
+            "h": 768
+        },
+        "scale": 1
+    }
+}

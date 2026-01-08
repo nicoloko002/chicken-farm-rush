@@ -9,8 +9,7 @@ export class Preloader extends Scene
 
     init ()
     {
-        //  We loaded this image in our Boot Scene, so we can display it here
-        this.add.image(512, 384, 'background');
+        this.add.image(512, 384, 'bgLoader');
 
         //  A simple progress bar. This is the outline of the bar.
         this.add.rectangle(512, 384, 468, 32).setStrokeStyle(1, 0xffffff);
@@ -31,9 +30,60 @@ export class Preloader extends Scene
     {
         //  Load the assets for the game - Replace with your own assets
         this.load.setPath('assets');
+        
+        // Menu
+        this.load.image('titlepage', 'images/backgrounds/ceu.png');
+        this.load.atlas('playButton', 'images/play_button.png', 'images/play_button.json');
+        this.load.audio('titleMusic', ['musics/Town_-_Quiet_Country_Village.mp3']);
+        this.load.audio('gameMusic', ['musics/JDB Artist - Inspirational Vol.2 - 02 My Way (Adventure).mp3']);
+        this.load.audio('endGameMusic', ['musics/JDB Artist - Inspirational Vol.2 - 04 We Stand Together (Adventure).mp3']);
+        this.load.image('invisible_block', 'invisible_block.png');
+        this.load.image('background', 'images/backgrounds/home.png');
 
-        this.load.image('logo', 'logo.png');
-        this.load.image('star', 'star.png');
+        // UI
+        this.load.image('chargeBarBackground', 'images/ui/chargeBar/chargebarBackground.png');
+        this.load.image('fullScreen', 'images/ui/full_screen.png');
+        this.load.image('chargeBarIconBackground', 'images/ui/chargeBar/chargebaIconBackground.png');
+        this.load.image('chargeBarPowerFill', 'images/ui/chargeBar/chargebarFoodFill.png');
+        this.load.image('chargeBarHealthFill', 'images/ui/chargeBar/chargebarHealthFill.png');
+        this.load.image('chargeBarXpFill', 'images/ui/chargeBar/chargebaXpFill.png');
+        this.load.image('chargeBarPowerIcon', 'images/ui/chargeBar/chargeBarIconPower.png');
+        this.load.image('chargeBarHealthIcon', 'images/ui/chargeBar/chargeBarIconHealth.png');
+        this.load.image('chargeBarXpIcon', 'images/ui/chargeBar/chargeBarIconXp.png');
+
+        this.load.image('bulletegg', 'images/ui/bulletegg.png');
+        this.load.spritesheet('bgBtn', 'images/ui/bgBtn.png', { frameWidth: 300/2, frameHeight: 151 });
+        this.load.spritesheet('minegg', 'images/ui/minegg.png', { frameWidth: 300/3, frameHeight: 55 });
+        this.load.image('stick', 'images/ui/stick.png');
+        this.load.image('food', 'images/itens/food.png');
+        this.load.image('empEggranade', 'images/ui/empEggranade.png');
+
+        // Pets
+        this.load.image('mini_chicken', 'images/player/pets/chicken.png');
+        this.load.image('evolve', 'images/player/pets/evolve.png');
+        this.load.image('petEgg', 'images/player/pets/egg.png');
+        this.load.spritesheet('crackingEgg', 'images/player/pets/cracking_egg.png', { frameWidth: 100, frameHeight: 137 });
+
+        this.load.atlas('bite', 'images/atacks/bite.png', 'images/atacks/bite.json');
+        this.load.atlas('masterHand', 'images/atacks/master_hand.png', 'images/atacks/master_hand.json');
+        this.load.spritesheet('punchEffect', 'images/atacks/punchEffect.png', { frameWidth: 400/4, frameHeight: 170/2 });
+        this.load.spritesheet('shotEffect', 'images/atacks/shotEffect.png', { frameWidth: 400/4, frameHeight: 170/2 });
+        this.load.spritesheet('bombEffect', 'images/atacks/bombEffect.png', { frameWidth: 400/4, frameHeight: 170/2 });
+        this.load.spritesheet('empEffect', 'images/atacks/empEffect.png', { frameWidth: 400/4, frameHeight: 170/2 });
+
+        this.load.audio('crackingEgg', ['sound/cracking_egg.ogg']);
+        this.load.audio('bite', ['sound/bite.ogg']);
+
+        this.load.spritesheet('snake', 'images/enemies/EarthWormMoving.png', { frameWidth: 796/4, frameHeight: 426/3 });
+        // this.load.spritesheet('chicken', 'images/enemies/$Animal_HF1_Chicken.png', { frameWidth: 50, frameHeight: 30 });
+        this.load.spritesheet('alien', 'images/enemies/alien.png', { frameWidth: 551/5, frameHeight: 100 });
+        this.load.spritesheet('shark', 'images/enemies/shark.png', { frameWidth: 880/4, frameHeight: 441/3 });
+        this.load.image('frog', 'images/enemies/frog.png');
+
+        this.load.audio('snakeSound', ['sound/snake.ogg']);
+        this.load.audio('damageSound', ['sound/damage.ogg']);
+        this.load.audio('boom', ['sound/boom.mp3']);
+        this.load.audio('shock', ['sound/shock.mp3']);
     }
 
     create ()
