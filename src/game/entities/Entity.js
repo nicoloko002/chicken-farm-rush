@@ -217,7 +217,7 @@ export class Entity extends Phaser.GameObjects.Sprite { // Herda item, NPC, stat
          var topLeft = this.getTopLeft();
          var bottomRight = this.getBottomRight();
 
-         if (bottomRight.x < 0 || bottomRight.y < 0 || topLeft.x > 800 || topLeft.y > 600) {
+         if (bottomRight.x < 0 || bottomRight.y < 0 || topLeft.x > this.scene.cameras.main.width || topLeft.y > this.scene.cameras.main.width) {
             this.kill();
          }
       }

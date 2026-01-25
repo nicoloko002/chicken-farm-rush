@@ -4,6 +4,7 @@ import { GameOver } from './scenes/GameOver';
 import { MainMenu } from './scenes/MainMenu';
 import Phaser from 'phaser';
 import { Preloader } from './scenes/Preloader';
+import { EntitiesPlugin } from './EntitiesPlugin';
 
 // Find out more information about the Game Config at:
 // https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
@@ -26,7 +27,12 @@ const config = {
         MainMenu,
         Game,
         GameOver
-    ]
+    ],
+    plugins: {
+        scene: [
+            { key: 'EntitiesPlugin', plugin: EntitiesPlugin, mapping: 'entities' }
+        ]
+    }
 };
 
 const StartGame = (parent) => {

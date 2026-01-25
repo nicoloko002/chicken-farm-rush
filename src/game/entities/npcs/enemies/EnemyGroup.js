@@ -16,7 +16,7 @@ export class EnemyGroup extends Phaser.Physics.Arcade.Group {
       this.rangeYMax = 0;
    }
 
-   setEnemyClasses(enemyClasses) {
+   setEnemyClasses(...enemyClasses) {
       this.enemyClasses = enemyClasses;
    }
 
@@ -57,17 +57,14 @@ export class EnemyGroup extends Phaser.Physics.Arcade.Group {
       this.timer = null;
    }
 
-   createRandomEnemy(enemyClass) {
+   createRandomEnemy() {
       this.timer.delay = Phaser.Math.RND.integerInRange(this.timeMin, this.timeMax);
       return this.createEnemy(this.randomEnemySprite());
    }
 
    createEnemy(enemyClass) {
       var enemy = new enemyClass(this.scene, this.getRandomX(), this.getRandomY())
-
-      this.scene.physics.add.existing(enemy);
       this.add(enemy);
-
       return enemy;
    }
 

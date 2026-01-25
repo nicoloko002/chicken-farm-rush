@@ -35,8 +35,6 @@ export class Snake extends Enemy {
          this.input.hitArea.setTo(10, 15, 140, 70);
          this.body.setSize(40, 80).setOffset(30, 20);
       }
-
-      this.on('pointerup', () => EventBus.emit('enemy-clicked', this));
    }
 
    behaviorPattern() {

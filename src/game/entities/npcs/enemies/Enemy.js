@@ -1,3 +1,4 @@
+import { EventBus } from "../../../EventBus";
 import { Person } from "../../Person";
 
 export class Enemy extends Person {
@@ -5,6 +6,7 @@ export class Enemy extends Person {
       super(scene, x, y, sprite);
 
       this.setInteractive();
+      this.on('pointerup', () => EventBus.emit('enemyClicked', this));
    }
 
    doDamage(atack) {
@@ -12,28 +14,11 @@ export class Enemy extends Person {
    }
 
    doWhenKilled() {
-      if (this.x > 0 && this.x < 800 && this.y > 0 && this.y < 600) {
-         let food = this.scene.foodGroup.create(this.x, this.y, 'food');
-         this.scene.tweens.add({
-            targets: food,
-            scale: {
-               value: .85,
-               duration: 200,
-               ease: 'Power2',
-               yoyo: true,
-               repeat: -1
-            },
-            y: {
-               value: 470,
-               duration: 500,
-               ease: 'linear'
-            }
-         });
-      }
+      EventBus.emit('EnemyKilled', this);
    }
 }
 
-function doDamage(atack, target) {
+export function doDamage(atack, target) {
    if (target.state != 'untouchable') {
       if (atack.damageSound) {
          atack.damageSound.play();
@@ -41,10 +26,6 @@ function doDamage(atack, target) {
 
       if (target.damageSound) {
          target.damageSound.play();
-      }
-
-      if (target.scene.damageSound) {
-         target.scene.damageSound.play();
       }
 
       if (atack.animation) {

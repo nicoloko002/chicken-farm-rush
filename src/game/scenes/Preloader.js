@@ -59,7 +59,7 @@ export class Preloader extends Scene
         this.load.image('empEggranade', 'images/ui/empEggranade.png');
 
         // Pets
-        this.load.image('mini_chicken', 'images/player/pets/chicken.png');
+        this.load.image('miniChicken', 'images/player/pets/chicken.png');
         this.load.image('evolve', 'images/player/pets/evolve.png');
         this.load.image('petEgg', 'images/player/pets/egg.png');
         this.load.spritesheet('crackingEgg', 'images/player/pets/cracking_egg.png', { frameWidth: 100, frameHeight: 137 });
@@ -80,6 +80,13 @@ export class Preloader extends Scene
         this.load.spritesheet('shark', 'images/enemies/shark.png', { frameWidth: 880/4, frameHeight: 441/3 });
         this.load.image('frog', 'images/enemies/frog.png');
 
+        // Bosses
+        this.load.spritesheet('wormBossIddle', 'images/enemies/wormBoss/iddle.png', { frameWidth: 3840/8, frameHeight: 4800/8 });
+        this.load.spritesheet('wormBossScream', 'images/enemies/wormBoss/scream.png', { frameWidth: 3840/8, frameHeight: 2400/4 });
+        this.load.spritesheet('wormBossScreamToIddle', 'images/enemies/wormBoss/screamToIddle.png', { frameWidth: 3840/8, frameHeight: 3000/5 });
+        this.load.spritesheet('wormBossSpawn', 'images/enemies/wormBoss/spawn.png', { frameWidth: 3840/8, frameHeight: 2400/4 });
+
+
         this.load.audio('snakeSound', ['sound/snake.ogg']);
         this.load.audio('damageSound', ['sound/damage.ogg']);
         this.load.audio('boom', ['sound/boom.mp3']);
@@ -92,6 +99,7 @@ export class Preloader extends Scene
         //  For example, you can define global animations here, so we can use them in other scenes.
 
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
-        this.scene.start('MainMenu');
+        // this.scene.start('MainMenu');
+        this.scene.start('Game');
     }
 }
