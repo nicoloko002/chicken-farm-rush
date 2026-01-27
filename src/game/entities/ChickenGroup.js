@@ -19,7 +19,7 @@ export default class ChickenGroup extends Phaser.Physics.Arcade.Group
     pointerInteraction(pointer)
     {
         this.items.forEach(item => {
-            if (Phaser.Math.Distance.BetweenPoints(pointer.position, item.instance.body.position) < INTERACTION_RANGE)
+            if (Phaser.Math.Distance.BetweenPoints(pointer.position, item.instance.body.position) < this.INTERACTION_RANGE)
                 item.pointerInteraction(pointer);
         });
     }
