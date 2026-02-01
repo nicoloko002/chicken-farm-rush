@@ -1,6 +1,7 @@
 import Phaser from "phaser";
+import { EventBus } from "../EventBus";
 
-export class Button extends Phaser.GameObjects.Container {
+export class Tool extends Phaser.GameObjects.Container {
    constructor(scene, x, y, iconSprite, backgroundSprite, chargeSprite, triggerKey, cost, cursor) {
       super(scene, x, y);
       this.cursor = cursor;
@@ -44,9 +45,6 @@ export class Button extends Phaser.GameObjects.Container {
       }
 
       // this.charge.anchor.set(0.5);
-
-
-
       this.incValue = 1;
       this.canIncrease = this.charge ? true : false;
 
@@ -77,32 +75,32 @@ export class Button extends Phaser.GameObjects.Container {
       }
 
       this.bgButton.on('pointerover', () => {
-         this.text.setPosition(8 + 5, 8 + 5);
-         this.icon.setPosition(center.x, center.y - 5);
-         this.bgButton && this.bgButton.setFrame(1);
-         this.background && this.background.setPosition(18, 100);
-         this.charge && this.charge.setPosition(this.background.x + 5, this.background.y + 5);
-         this.cost && this.cost.setPosition(25 + 5, 115 + 5);
+         if (!this.pressed) {
+            this.text.setPosition(8 + 5, 8 + 5);
+            this.icon.setPosition(center.x, center.y - 5);
+            this.bgButton && this.bgButton.setFrame(1);
+            this.background && this.background.setPosition(18, 100);
+            this.charge && this.charge.setPosition(this.background.x + 5, this.background.y + 5);
+            this.cost && this.cost.setPosition(25 + 5, 115 + 5);
+         }
       });
-      this.bgButton.on('pointerout', this.deselect, this);
+      this.bgButton.on('pointerout', () => !this.pressed && this.deselect());
 
       this.scene.input.keyboard.on('keydown-' + triggerKey, this.buttonDown, this);
       this.bgButton.on('pointerdown', this.buttonDown, this);
 
       this.triggerKey = triggerKey;
+      this.pressed = false;
    }
 
    deselect() {
-      if (this.scene.selectedPointer != this.triggerKey) {
-         this.text.setPosition(8, 8);
-         this.icon.setPosition(this.bgButton.getCenter().x - 5, this.bgButton.getCenter().y - 10);
-         this.bgButton.setFrame(0);
-         this.background && this.background.setPosition(18 - 5, 100 - 5);
-         this.charge && this.charge.setPosition(this.background.x + 5, this.background.y + 5);
-         this.cost && this.cost.setPosition(25, 115);
-      } else {
-         this.bgButton.emit('pointerover');
-      }
+      this.text.setPosition(8, 8);
+      this.icon.setPosition(this.bgButton.getCenter().x - 5, this.bgButton.getCenter().y - 10);
+      this.bgButton.setFrame(0);
+      this.background && this.background.setPosition(18 - 5, 100 - 5);
+      this.charge && this.charge.setPosition(this.background.x + 5, this.background.y + 5);
+      this.cost && this.cost.setPosition(25, 115);
+      this.pressed = false;
    }
 
    buttonDown(pointer, localx, localy, event) {
@@ -113,9 +111,9 @@ export class Button extends Phaser.GameObjects.Container {
       this.bgButton.setFrame(1);
       this.background && this.background.setPosition(18, 100);
       this.charge && this.charge.setPosition(this.background.x + 5, this.background.y + 5);
-      this.scene.selectedPointer = this.triggerKey;
-      this.scene.deselectButtons();
-      this.scene.cursor = this.cursor;
+      this.pressed = true;
+
+      EventBus.emit('buttonPressed', this);
    }
 
    setBorder(value) {
@@ -127,26 +125,6 @@ export class Button extends Phaser.GameObjects.Container {
 
    setIncValue(incValue) {
       this.incValue = incValue;
-   }
-
-   inc() {
-      if (this.area.width + this.incValue > this.maxValue) {
-         this.area.width = this.maxValue;
-      } else {
-         this.area.width += this.incValue;
-      }
-
-      this.charge.setCrop(this.area);
-   }
-
-   dec() {
-      if (this.area.width - this.incValue < 0) {
-         this.area.width
-      } else {
-         this.area.width -= this.incValue;
-      }
-
-      this.charge.setCrop(this.area);
    }
 
    reset() {
@@ -165,20 +143,17 @@ export class Button extends Phaser.GameObjects.Container {
    }
 
    preUpdate(time, delta) {
-      if (this.area && this.area.width > this.maxValue) {
-         this.area.width = this.maxValue;
-
-         if (this.glowTween) {
-            this.glowTween.resume();
-         }
-      }
-   }
-
-   update() {
       if (this.area) {
+         if (this.area.width > this.maxValue) {
+            this.area.width = this.maxValue;
+   
+            if (this.glowTween) {
+               this.glowTween.resume();
+            }
+         }
+         
          this.area.width += this.incValue;
          this.charge.setCrop(this.area);
       }
    }
-
 }

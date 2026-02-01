@@ -10,7 +10,8 @@ import {
 } from 'phaser';
 import { doDamage } from '../entities/npcs/enemies/Enemy';
 import { Score } from '../ui/Score';
-import { Button } from '../ui/Button';
+import { Tool } from '../ui/Tool';
+import { ToolManager } from '../ui/ToolManager';
 
 export class Game extends Scene {
 
@@ -31,65 +32,16 @@ export class Game extends Scene {
     configUi() {
         this.uiContainer = this.add.container(0, 0);
         
-        let eggImg = this.add.sprite(40, 550, 'petEgg');
+        let eggImg = this.add.sprite(40, 725, 'petEgg');
         eggImg.setScale(.35);
         eggImg.setRotation(-.6);
         this.uiContainer.add(eggImg);
 
-        this.score = new Score(this, 80, 545);
+        this.score = new Score(this, 80, 720);
         this.score.incScore(6);
         this.uiContainer.add(this.score);
 
-        this.hand = new Button(this, 160, 515, 'masterHand', 'bgBtn', null, 'Q');
-        this.hand.setIncValue(10);
-        this.uiContainer.add(this.hand);
-
-        this.stick = new Button(this, 240, 515, 'stick', 'bgBtn', 'chargeBarHealthFill', 'W', null, {
-            atack: {
-                min: 2,
-                max: 5,
-                animation: 'punchEffect',
-                origin: {
-                x: 0.5,
-                y: 0.5
-                }
-            },
-        });
-        this.stick.setIncValue(5);
-        this.uiContainer.add(this.stick);
-
-        this.bulletegg = new Button(this, 320, 515, 'bulletegg', 'bgBtn', 'chargeBarHealthFill', 'E', 1, {
-            atack: {
-                min: 60,
-                max: 60,
-                animation: 'shotEffect',
-                origin: {
-                x: 0.5,
-                y: 0.5
-                }
-            },
-        });
-        this.bulletegg.setIncValue(1);
-        this.uiContainer.add(this.bulletegg);
-
-        this.minegg = new Button(this, 400, 515, 'minegg', 'bgBtn', 'chargeBarHealthFill', 'R', 2);
-        this.minegg.setIncValue(.3);
-        this.uiContainer.add(this.minegg);
-
-        this.empEggranade = new Button(this, 480, 515, 'empEggranade', 'bgBtn', 'chargeBarHealthFill', 'T', 50, {
-            atack: {
-                min: 9999,
-                max: 9999,
-                animation: 'empEffect',
-                origin: {
-                x: 0.5,
-                y: 0.5
-                },
-                damageSound: this.sound.add('shock')
-            },
-        });
-        this.empEggranade.setIncValue(.01);
-        this.uiContainer.add(this.empEggranade);
+        this.toolManager = new ToolManager(this, this.uiContainer);
     }
 
     configEnemies() {
@@ -110,29 +62,32 @@ export class Game extends Scene {
         this.rightSideGenerator.setRangeX(this.cameras.main.width, this.cameras.main.width);
         this.rightSideGenerator.setRangeY(465, 465);
         this.rightSideGenerator.start();
+        
+        this.foodGroup = this.physics.add.group();
+        this.foodGroup.enableBody = true;
 
         EventBus.on('enemyKilled', (enemy) => {
-            if (enemy.x > 0 && enemy.x < this.scene.cameras.main.width && enemy.y > 0 && enemy.y < this.scene.cameras.main.height) {
-                let food = this.foodGroup.create(this.x, this.y, 'food');
-                this.scene.tweens.add({
+            if (enemy.x > 0 && enemy.x < this.cameras.main.width && enemy.y > 0 && enemy.y < this.cameras.main.height) {
+                let food = this.foodGroup.create(enemy.x, enemy.y, 'food');
+                this.tweens.add({
                     targets: food,
                     scale: {
-                    value: .85,
-                    duration: 200,
-                    ease: 'Power2',
-                    yoyo: true,
-                    repeat: -1
+                        value: .85,
+                        duration: 200,
+                        ease: 'Power2',
+                        yoyo: true,
+                        repeat: -1
                     },
                     y: {
-                    value: 470,
-                    duration: 500,
-                    ease: 'linear'
+                        value: 470,
+                        duration: 500,
+                        ease: 'linear'
                     }
                 });
             }
         })
 
-        EventBus.on('enemyClicked', (enemy) => enemy.doDamage({
+        let cursorEnemyClickConfig = {
             min: 2,
             max: 5,
             animation: 'punchEffect',
@@ -141,7 +96,8 @@ export class Game extends Scene {
                y: 0.5
             },
             damageSound: this.sound.add('damageSound')
-        }));
+        };
+        EventBus.on('enemyClicked', (enemy) => enemy.doDamage(cursorEnemyClickConfig));
     }
 
     configEffects() {

@@ -38,8 +38,6 @@ export class Entity extends Phaser.GameObjects.Sprite { // Herda item, NPC, stat
 
       // this.healthBar; //!! arrumar
 
-      EventBus.on('killed', this.whenKilled, this);
-
       this.killWhenOutOfBounds = false;
       this.alreadyShowed = false;
       this.scene.add.existing(this);
@@ -276,8 +274,7 @@ export class Entity extends Phaser.GameObjects.Sprite { // Herda item, NPC, stat
       this.alive = false;
       this.setActive(false);
       this.setVisible(false);
-
-      EventBus.emit('killed');
+      this.whenKilled();
 
       this.x = 0;
       this.y = 0;

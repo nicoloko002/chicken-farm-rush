@@ -14,7 +14,7 @@ export class Enemy extends Person {
    }
 
    doWhenKilled() {
-      EventBus.emit('EnemyKilled', this);
+      EventBus.emit('enemyKilled', this);
    }
 }
 

@@ -11,10 +11,10 @@ export class Score extends Phaser.GameObjects.Text {
    }
 
    setScore(score) {
-      this.text = score;
+      this.text = 'x ' + score;
    }
 
    incScore(incValue) {
-      this.text = Number(this.text) + Number(incValue);
+      this.text = 'x ' + (Number(this.text) + Number(incValue));
    }
 }
