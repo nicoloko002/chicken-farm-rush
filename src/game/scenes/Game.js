@@ -22,7 +22,6 @@ export class Game extends Scene {
     create() {
         this.chickenGroup = new ChickenGroup(this);
         this.chickenGroup.add(new Chicken(this, 500, 500));
-        this.input.on('pointerdown', this.scenarioInteraction, this);
 
         this.configUi();
         this.configEnemies();
@@ -86,18 +85,6 @@ export class Game extends Scene {
                 });
             }
         })
-
-        let cursorEnemyClickConfig = {
-            min: 2,
-            max: 5,
-            animation: 'punchEffect',
-            origin: {
-               x: 0.5,
-               y: 0.5
-            },
-            damageSound: this.sound.add('damageSound')
-        };
-        EventBus.on('enemyClicked', (enemy) => enemy.doDamage(cursorEnemyClickConfig));
     }
 
     configEffects() {
@@ -119,9 +106,5 @@ export class Game extends Scene {
 
     changeScene() {
         this.scene.start('GameOver');
-    }
-
-    scenarioInteraction(pointer) {
-        this.chickenGroup.pointerInteraction(pointer);
     }
 }

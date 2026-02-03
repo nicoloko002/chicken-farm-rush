@@ -2,9 +2,8 @@ import Phaser from "phaser";
 import { EventBus } from "../EventBus";
 
 export class Tool extends Phaser.GameObjects.Container {
-   constructor(scene, x, y, iconSprite, backgroundSprite, chargeSprite, triggerKey, cost, cursor) {
+   constructor(scene, x, y, iconSprite, backgroundSprite, chargeSprite, triggerKey, cost) {
       super(scene, x, y);
-      this.cursor = cursor;
 
       this.setScale(.5);
 
@@ -46,7 +45,6 @@ export class Tool extends Phaser.GameObjects.Container {
 
       // this.charge.anchor.set(0.5);
       this.incValue = 1;
-      this.canIncrease = this.charge ? true : false;
 
       var center = this.bgButton.getCenter();
       this.icon = new Phaser.GameObjects.Sprite(scene, center.x - 5, center.y - 10, iconSprite);
@@ -144,6 +142,8 @@ export class Tool extends Phaser.GameObjects.Container {
 
    preUpdate(time, delta) {
       if (this.area) {
+         this.area.width += this.incValue;
+         
          if (this.area.width > this.maxValue) {
             this.area.width = this.maxValue;
    
@@ -151,9 +151,27 @@ export class Tool extends Phaser.GameObjects.Container {
                this.glowTween.resume();
             }
          }
-         
-         this.area.width += this.incValue;
+
          this.charge.setCrop(this.area);
       }
    }
+
+   canExecuteAction() {
+      // TODO: check cost x score
+      return this.area.width == this.maxValue;
+   }
+
+   executeAction(pointer) {
+      if (this.charge == null) {
+         this.action(pointer);
+         return;
+      }
+
+      if (this.canExecuteAction()) {
+         this.area.width = 0;
+         this.action(pointer);
+      }
+   }
+
+   action(pointer) {} // Override
 }

@@ -1,4 +1,6 @@
 import { EventBus } from "../EventBus";
+import { HandTool } from "./HandTool";
+import { StickTool } from "./StickTool";
 import { Tool } from "./Tool";
 
 export class ToolManager {
@@ -13,11 +15,11 @@ export class ToolManager {
     }
 
     initializeTools() {
-        this.hand = new Tool(this.scene, 160, 690, 'masterHand', 'bgBtn', null, 'Q');
+        this.hand = new HandTool(this.scene, 160, 690, 'masterHand', 'bgBtn', null, 'Q');
         this.hand.setIncValue(10);
         this.uiContainer.add(this.hand);
 
-        this.stick = new Tool(this.scene, 240, 690, 'stick', 'bgBtn', 'chargeBarHealthFill', 'W', null, {
+        this.stick = new StickTool(this.scene, 240, 690, 'stick', 'bgBtn', 'chargeBarHealthFill', 'W', null, {
             atack: {
                 min: 2,
                 max: 5,
@@ -65,13 +67,15 @@ export class ToolManager {
         this.uiContainer.add(this.empEggranade);
         
         EventBus.on('buttonPressed', (button) => {
-            this.currentTool = button.triggerKey;
+            this.currentTool = button;
             this.deselectButtons();
             this.cursor = button.cursor;
         });
+
+        this.scene.input.on('pointerdown', pointer => pointer.y < this.hand.y && this.currentTool?.executeAction(pointer), this);
     }
     
     deselectButtons() {
-        this.uiContainer.iterate((item) => item instanceof Tool && item?.triggerKey != this.currentTool && item.deselect());
+        this.uiContainer.iterate((item) => item instanceof Tool && item != this.currentTool && item.deselect());
     }
 }
