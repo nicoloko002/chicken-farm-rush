@@ -39,7 +39,6 @@ class JumpingState extends State {
       this.path = new Phaser.Curves.Path(0, 0);
       this.path.cubicBezierTo(distance, 0, distance/2, -distance, distance/2, -distance);
       this.duration = duration;
-      this.baseHeight = entity.instance.y;
 
       this.bounce = () => entity.instance.scene.tweens.add(
          {
@@ -100,6 +99,7 @@ export class Chicken {
       scene.entities.add(this);
       this.level = 0;
       this.targetLevelToLayEggs = 3
+      this.baseHeight = this.instance.y;
 
       this.evolveTimer = scene.time.addEvent({
          delay: CHICKEN_CONFIG.EVOLVE_DELAY,
