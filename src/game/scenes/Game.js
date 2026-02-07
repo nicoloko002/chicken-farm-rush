@@ -12,6 +12,7 @@ import { doDamage } from '../entities/npcs/enemies/Enemy';
 import { Score } from '../ui/Score';
 import { Tool } from '../ui/Tool';
 import { ToolManager } from '../ui/ToolManager';
+import { Egg } from '../entities/npcs/pets/Egg';
 
 export class Game extends Scene {
 
@@ -20,12 +21,25 @@ export class Game extends Scene {
     }
 
     create() {
-        this.chickenGroup = new ChickenGroup(this);
-        this.chickenGroup.add(new Chicken(this, 500, 500));
-
+        this.configPet();
         this.configUi();
         this.configEnemies();
         this.configEffects();
+    }
+
+    configPet() {
+        this.chickenGroup = new ChickenGroup(this);
+        this.chickenGroup.add(new Chicken(this, 500, 500));
+
+        this.eggGroup = this.physics.add.group();
+
+        EventBus.on('chicken:layEgg', (chicken) => {
+            if (chicken.instance.x > 0 && chicken.instance.x < this.cameras.main.width) {
+                this.eggGroup.add(new Egg(this, chicken.instance.x, chicken.baseHeight, this.eggGroup, this.chickenGroup));
+            }
+        });
+
+        EventBus.on('egg:hatched', (egg) => this.chickenGroup.add(new Chicken(this, egg.x, egg.y)))
     }
 
     configUi() {

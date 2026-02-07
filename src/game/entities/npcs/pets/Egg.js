@@ -12,7 +12,7 @@ export class Egg extends Pet {
 
       this.state = this.IDLE;
       this.setOrigin(0.5, 0.9);
-      this.rotationTween = 0;
+      this.angleTween = 0;
       this.health = this.maxHealth = 50;
       this.maxXp = 1;
       this.setScale(.17);
@@ -43,7 +43,7 @@ export class Egg extends Pet {
                   return;
 
                this.waitTimedEvent = true;
-               this.scene.time.addEvent({ delay: 20000, callback: this.changeState, callbackScope: this, args: [this.MOVING_1] });
+               this.scene.time.addEvent({ delay: 1000, callback: this.changeState, callbackScope: this, args: [this.MOVING_1] });
                // this.scene.time.addEvent({ delay: 1000, callback: this.changeState, callbackScope: this, args: [this.CRACKING] });
 
                break;
@@ -51,29 +51,26 @@ export class Egg extends Pet {
                if (this.waitTimedEvent)
                   return;
 
-               this.timeline = this.scene.tweens.createTimeline();
-               this.rotationTween = .1;
-
-               this.timeline.add({
+               this.angleTween = 15;
+               this.scene.tweens.chain({
                   targets: this,
-                  rotation: () => -this.rotationTween,
-                  duration: 500,
-                  ease: 'Power2',
-                  yoyo: true,
+                  tweens: [
+                     {
+                     angle: () => -this.angleTween,
+                     duration: 500,
+                     ease: 'Power2',
+                     yoyo: true
+                     },
+                     {
+                     angle: () => this.angleTween,
+                     duration: 500,
+                     ease: 'Power2',
+                     yoyo: true
+                     }
+                  ],
+                  loop: -1,
                });
-
-               this.timeline.add({
-                  targets: this,
-                  rotation: () => this.rotationTween,
-                  duration: 500,
-                  ease: 'Power2',
-                  yoyo: true,
-               });
-
                this.waitTimedEvent = true;
-               this.timeline.loop = -1;
-               this.timeline.play();
-
                this.scene.time.addEvent({ delay: 15000, callback: this.changeState, callbackScope: this, args: [this.MOVING_2] });
 
                break;
@@ -81,7 +78,7 @@ export class Egg extends Pet {
                if (this.waitTimedEvent)
                   return;
 
-               this.rotationTween = .2;
+               this.angleTween = 30;
 
                this.waitTimedEvent = true;
                this.scene.time.addEvent({ delay: 10000, callback: this.changeState, callbackScope: this, args: [this.MOVING_3] });
@@ -91,7 +88,7 @@ export class Egg extends Pet {
                if (this.waitTimedEvent)
                   return;
 
-               this.rotationTween = .3;
+               this.angleTween = .3;
 
                this.tweenHResize = this.scene.tweens.add({
                   targets: this,
@@ -139,7 +136,7 @@ export class Egg extends Pet {
                         }
                      });
 
-                     this.chickenGroup.add(new Chicken(this.scene, this.x, this.y, this.chickenGroup, this.eggGroup));
+                     EventBus.emit("egg:hatched", this);
                   }
                }, callbackScope: this });
 
