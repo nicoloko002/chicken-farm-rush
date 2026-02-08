@@ -2,7 +2,7 @@ import { EventBus } from "../../../EventBus";
 import { State, StateMachine } from "../../StateMachine";
 
 const CHICKEN_CONFIG = {
-   EVOLVE_DELAY: 10000,
+   EVOLVE_DELAY: 1000,
    LAY_EGG_DELAY: [8000, 10000],
    IDDLE_DELAY: [1000, 5000],
    JUMPING: {
@@ -18,10 +18,10 @@ class IddleState extends State {
    }
 
    update(entity, deltaTime) {
-      this.IddleState += deltaTime;
+      this.iddleTimer += deltaTime;
 
-      if (this.IddleState >= this.iddleTimerTarget) {
-         entity.stateMachine.transition('slowJump');
+      if (this.iddleTimer >= this.iddleTimerTarget) {
+         entity.stateMachine.transition('slowJumping', entity, { direction: Phaser.Math.RND.sign() });
       }
    }
 
@@ -74,11 +74,11 @@ class JumpingState extends State {
 
    update(entity, deltaTime) {
       this.path.getPoint(this.follower.t, this.follower.vec);
-      entity.instance.setPosition(this.initPosition.x + this.follower.vec.x * (entity.instance.flipX ? -1 : 1), this.initPosition.y + this.follower.vec.y);
+      entity.instance.setPosition(this.initPosition.x + (this.follower.vec.x * entity.instance.scaleX) * (entity.instance.flipX ? -1 : 1), this.initPosition.y + (this.follower.vec.y * entity.instance.scaleX));
    }
 
    exit(entity) {
-      this.jumpTween.stop();
+      this.jumpTween?.destroy();
       this.initPosition.x = entity.instance.x;
       entity.instance.setY(this.initPosition.y);
    }
@@ -88,12 +88,14 @@ export class Chicken {
    constructor(scene, x, y) {
       this.instance = scene.physics.add.sprite(x, y, 'miniChicken');
       this.instance.setOrigin(.5, 1);
-      this.baseScale = .5;
+      this.baseScale = .35;
       this.instance.setScale(this.baseScale);
+
       this.stateMachine = new StateMachine()
          .addState('iddle', new IddleState())
          .addState('slowJumping', new JumpingState(CHICKEN_CONFIG.JUMPING.SLOW.DURATION, CHICKEN_CONFIG.JUMPING.SLOW.DISTANCE, this))
-         .addState('fastJumping', new JumpingState(CHICKEN_CONFIG.JUMPING.FAST.DURATION, CHICKEN_CONFIG.JUMPING.FAST.DISTANCE, this))
+         .addState('fastJumping', new JumpingState(CHICKEN_CONFIG.JUMPING.FAST.DURATION, CHICKEN_CONFIG.JUMPING.FAST.DISTANCE, this));
+      this.stateMachine.transition('iddle', this);
 
       this.active = true;
       scene.entities.add(this);
@@ -145,13 +147,6 @@ export class Chicken {
          this.stateMachine.transition('fastJumping', this, { direction: pointer.position.x > this.instance.getCenter().x ? -1 : 1 });
    }
 
-   stopJump()
-   {
-   }
-
-   jump(direction, duration) {
-   }
-
    setActive(value) {
       this.active = value;
       return this;
@@ -159,5 +154,20 @@ export class Chicken {
 
    update(delta){
       this.stateMachine.update(this, delta);
+
+      var topLeft = this.instance.getTopLeft();
+      var bottomRight = this.instance.getBottomRight();
+
+      if (bottomRight.x < 0 || bottomRight.y < 0 || topLeft.x > this.instance.scene.cameras.main.width || topLeft.y > this.instance.scene.cameras.main.height) {
+         this.destroy();
+      }
+   }
+
+   destroy() {
+      this.evolveTimer?.destroy();
+      this.eggTimer?.destroy();
+      this.instance.scene.entities.remove(this);
+      this.instance.destroy();
+      EventBus.emit('chicken:killed', this);
    }
 }

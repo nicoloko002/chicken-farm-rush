@@ -8,13 +8,16 @@ export class Score extends Phaser.GameObjects.Text {
       });
 
       this.scene.add.existing(this);
+      this.amount = 0;
    }
 
    setScore(score) {
+      this.amount = score;
       this.text = 'x ' + score;
    }
 
    incScore(incValue) {
-      this.text = 'x ' + (Number(this.text) + Number(incValue));
+      this.amount += incValue;
+      this.text = 'x ' + this.amount;
    }
 }

@@ -40,6 +40,8 @@ export class Game extends Scene {
         });
 
         EventBus.on('egg:hatched', (egg) => this.chickenGroup.add(new Chicken(this, egg.x, egg.y)))
+        EventBus.on('egg:clicked', (egg) => this.score.incScore(1));
+        EventBus.on('chicken:killed', (chicken) => this.chickenGroup.remove(chicken));
     }
 
     configUi() {
@@ -64,7 +66,7 @@ export class Game extends Scene {
         // this.leftSideGenerator.setTimeInterval(1000, 5000);
         this.leftSideGenerator.setTimeInterval(1500, 30000);
         this.leftSideGenerator.setRangeX(0, 0);
-        this.leftSideGenerator.setRangeY(465, 465);
+        this.leftSideGenerator.setRangeY(480, 480);
         this.leftSideGenerator.start();
 
         this.rightSideGenerator = new EnemyGroup(this);
@@ -73,7 +75,7 @@ export class Game extends Scene {
         // this.rightSideGenerator.setTimeInterval(1000, 5000);
         this.rightSideGenerator.setTimeInterval(1500, 30000);
         this.rightSideGenerator.setRangeX(this.cameras.main.width, this.cameras.main.width);
-        this.rightSideGenerator.setRangeY(465, 465);
+        this.rightSideGenerator.setRangeY(480, 480);
         this.rightSideGenerator.start();
         
         this.foodGroup = this.physics.add.group();

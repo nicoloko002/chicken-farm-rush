@@ -32,7 +32,7 @@ export class Egg extends Pet {
       this.setInteractive();
       this.on('pointerup', () => {
          this.kill();
-         EventBus.emit('eggClicked', this);
+         EventBus.emit('egg:clicked', this);
       });
    }
 
@@ -51,7 +51,7 @@ export class Egg extends Pet {
                if (this.waitTimedEvent)
                   return;
 
-               this.angleTween = 15;
+               this.angleTween = 5;
                this.scene.tweens.chain({
                   targets: this,
                   tweens: [
@@ -78,7 +78,7 @@ export class Egg extends Pet {
                if (this.waitTimedEvent)
                   return;
 
-               this.angleTween = 30;
+               this.angleTween = 15;
 
                this.waitTimedEvent = true;
                this.scene.time.addEvent({ delay: 10000, callback: this.changeState, callbackScope: this, args: [this.MOVING_3] });
@@ -88,7 +88,7 @@ export class Egg extends Pet {
                if (this.waitTimedEvent)
                   return;
 
-               this.angleTween = .3;
+               this.angleTween = 20;
 
                this.tweenHResize = this.scene.tweens.add({
                   targets: this,

@@ -19,7 +19,6 @@ export class StateMachine {
 
   addState(name, state) {
     this.states.set(name, state);
-    this.currentState ??= state;
     return this;
   }
 
@@ -32,7 +31,7 @@ export class StateMachine {
     const nextState = this.states.get(stateName);
 
     if (this.currentState === nextState) return;
-    console.debug(`State change from "${this.currentState.constructor.name}" to "${nextState.constructor.name}"`)
+    console.debug(`State change from "${this.currentState?.constructor?.name}" to "${nextState.constructor.name}"`)
     
     // Exit current state
     this.currentState?.exit(entity);
