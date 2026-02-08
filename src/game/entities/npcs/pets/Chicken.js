@@ -2,7 +2,7 @@ import { EventBus } from "../../../EventBus";
 import { State, StateMachine } from "../../StateMachine";
 
 const CHICKEN_CONFIG = {
-   EVOLVE_DELAY: 1000,
+   EVOLVE_DELAY: 10000,
    LAY_EGG_DELAY: [8000, 10000],
    IDDLE_DELAY: [1000, 5000],
    JUMPING: {
@@ -11,7 +11,7 @@ const CHICKEN_CONFIG = {
    }
 }
 
-class IddleState extends State {
+export class IddleState extends State {
    enter() {
       this.iddleTimer = 0;
       this.iddleTimerTarget = Phaser.Math.RND.integerInRange(CHICKEN_CONFIG.IDDLE_DELAY[0], CHICKEN_CONFIG.IDDLE_DELAY[1]);
@@ -28,7 +28,7 @@ class IddleState extends State {
    exit() {}
 }
 
-class JumpingState extends State {
+export class JumpingState extends State {
    constructor(duration, distance, entity) {
       super();
       this.initPosition = new Phaser.Math.Vector2(entity.instance.x, entity.instance.y);
@@ -40,13 +40,14 @@ class JumpingState extends State {
       this.path.cubicBezierTo(distance, 0, distance/2, -distance, distance/2, -distance);
       this.duration = duration;
 
-      this.bounce = () => entity.instance.scene.tweens.add(
+      this.bounce = () => entity.instance?.scene?.tweens?.add(
          {
             targets: entity.instance,
-            scaleY: entity.baseScale * .7,
+            scaleY: entity.instance.scaleY * .7,
             ease: 'Sine.easeInOut',
             duration: this.duration/2,
-            yoyo: true
+            yoyo: true,
+            onComplete: () => entity.instance.setScale(entity.baseScale + .05 * entity.level)
          }
       )
    }
@@ -90,6 +91,7 @@ export class Chicken {
       this.instance.setOrigin(.5, 1);
       this.baseScale = .35;
       this.instance.setScale(this.baseScale);
+      this.instance.setData('parent', this);
 
       this.stateMachine = new StateMachine()
          .addState('iddle', new IddleState())
@@ -106,11 +108,9 @@ export class Chicken {
       this.evolveTimer = scene.time.addEvent({
          delay: CHICKEN_CONFIG.EVOLVE_DELAY,
          callback: () => {
-            if (this.level >= this.targetLevelToLayEggs)
-               return;
-
-            this.evolve();
-
+            if (this.level < this.targetLevelToLayEggs)
+               this.evolve();
+            
             if (this.level >= this.targetLevelToLayEggs && !this.eggTimer) {
                this.eggTimer = scene.time.addEvent({
                   delay: Phaser.Math.RND.integerInRange(CHICKEN_CONFIG.LAY_EGG_DELAY[0], CHICKEN_CONFIG.LAY_EGG_DELAY[1]),
@@ -125,14 +125,18 @@ export class Chicken {
    }
 
    feed() {
-      if (this.level >= this.targetLevelToLayEggs)
+      if (this.level < this.targetLevelToLayEggs)
          this.evolve()
       else
-         this.layEgg()
+         this.instance.scene.time.addEvent({
+            delay: Phaser.Math.RND.integerInRange(CHICKEN_CONFIG.LAY_EGG_DELAY[0]/5, CHICKEN_CONFIG.LAY_EGG_DELAY[1]/5),
+            callback: this.layEgg,
+            callbackScope: this
+         });
    }
 
    evolve() {
-      this.instance.setScale(this.instance.scaleX + .05);
+      this.instance.setScale(this.baseScale + .05 * this.level);
       this.level += 1;
    }
 

@@ -1,7 +1,7 @@
 import ChickenGroup from '../entities/ChickenGroup';
 import { EnemyGroup } from '../entities/npcs/enemies/EnemyGroup';
 import { Snake } from '../entities/npcs/enemies/Snake';
-import { Chicken } from '../entities/npcs/pets/Chicken';
+import { Chicken, JumpingState } from '../entities/npcs/pets/Chicken';
 import {
     EventBus
 } from '../EventBus';
@@ -21,6 +21,11 @@ export class Game extends Scene {
     }
 
     create() {
+        this.eggSwallowSound = this.sound.add('bite');
+
+        this.foodGroup = this.physics.add.group();
+        this.foodGroup.enableBody = true;
+
         this.configPet();
         this.configUi();
         this.configEnemies();
@@ -42,6 +47,8 @@ export class Game extends Scene {
         EventBus.on('egg:hatched', (egg) => this.chickenGroup.add(new Chicken(this, egg.x, egg.y)))
         EventBus.on('egg:clicked', (egg) => this.score.incScore(1));
         EventBus.on('chicken:killed', (chicken) => this.chickenGroup.remove(chicken));
+
+        this.physics.add.overlap(this.chickenGroup, this.foodGroup, this.catchFood, null, this);
     }
 
     configUi() {
@@ -77,9 +84,6 @@ export class Game extends Scene {
         this.rightSideGenerator.setRangeX(this.cameras.main.width, this.cameras.main.width);
         this.rightSideGenerator.setRangeY(480, 480);
         this.rightSideGenerator.start();
-        
-        this.foodGroup = this.physics.add.group();
-        this.foodGroup.enableBody = true;
 
         EventBus.on('enemyKilled', (enemy) => {
             if (enemy.x > 0 && enemy.x < this.cameras.main.width && enemy.y > 0 && enemy.y < this.cameras.main.height) {
@@ -100,7 +104,14 @@ export class Game extends Scene {
                     }
                 });
             }
-        })
+        });
+        
+        this.physics.add.overlap(this.leftSideGenerator, this.foodGroup, this.catchFood, null, this);
+        this.physics.add.overlap(this.rightSideGenerator, this.foodGroup, this.catchFood, null, this);
+        this.physics.add.overlap(this.leftSideGenerator, this.chickenGroup, this.collideWithChicken, null, this);
+        this.physics.add.overlap(this.rightSideGenerator, this.chickenGroup, this.collideWithChicken, null, this);
+        this.physics.add.overlap(this.leftSideGenerator, this.eggGroup, this.collideWithEgg, null, this);
+        this.physics.add.overlap(this.rightSideGenerator, this.eggGroup, this.collideWithEgg, null, this);
     }
 
     configEffects() {
@@ -110,6 +121,29 @@ export class Game extends Scene {
             frameRate: 20,
         });
     }
+
+   catchFood(person, food) {
+      this.eggSwallowSound.play();
+      const personParent = person.getData('parent');
+      personParent instanceof Chicken && personParent.feed();
+      food.destroy();
+   }
+
+   collideWithChicken(enemy, chicken) {
+       const chickenParent = chicken.getData('parent');
+      if (enemy instanceof Snake) {
+         if (!(chickenParent.stateMachine.currentState instanceof JumpingState))
+            chickenParent.stateMachine.transition('fastJumping', chickenParent, { direction: enemy.x < chicken.x ? 1 : -1 });
+      } else {
+         this.eggSwallowSound.play();
+         chickenParent.destroy();
+      }
+   }
+
+   collideWithEgg(enemy, egg) {
+      this.eggSwallowSound.play();
+      egg.kill();
+   }
 
     update() {
     }
