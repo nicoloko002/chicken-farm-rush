@@ -12,6 +12,12 @@ const config = {
     type: Phaser.AUTO,
     width: 1024,
     height: 768,
+    scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        fullscreenTarget: 'game-container',
+        expandParent: true
+    },
     parent: 'game-container',
     backgroundColor: '#028af8',
     physics: {

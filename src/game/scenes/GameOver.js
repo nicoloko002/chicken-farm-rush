@@ -21,6 +21,7 @@ export class GameOver extends Scene
         }).setOrigin(0.5).setDepth(100);
 
         EventBus.emit('current-scene-ready', this);
+        this.time.delayedCall(3000, this.changeScene, [], this);
     }
 
     changeScene ()

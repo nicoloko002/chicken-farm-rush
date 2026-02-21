@@ -39,6 +39,15 @@ export class Preloader extends Scene
         this.load.audio('endGameMusic', ['musics/JDB Artist - Inspirational Vol.2 - 04 We Stand Together (Adventure).mp3']);
         this.load.image('invisible_block', 'invisible_block.png');
         this.load.image('background', 'images/backgrounds/home.png');
+        this.load.image('bg1', 'images/backgrounds/bg1.jpeg');
+        this.load.image('bg2', 'images/backgrounds/bg2.jpeg');
+        this.load.image('bg3', 'images/backgrounds/bg3.jpeg');
+        this.load.image('bg4', 'images/backgrounds/bg4.jpeg');
+        this.load.image('bg5', 'images/backgrounds/bg5.jpeg');
+        this.load.image('bg6', 'images/backgrounds/bg6.jpeg');
+        this.load.image('bg7', 'images/backgrounds/bg7.jpeg');
+        this.load.image('panel', 'images/ui/panel.png');
+        this.load.image('menuButtom', 'images/ui/buttons/menuButtom.png');
 
         // UI
         this.load.image('chargeBarBackground', 'images/ui/chargeBar/chargebarBackground.png');
@@ -99,7 +108,7 @@ export class Preloader extends Scene
         //  For example, you can define global animations here, so we can use them in other scenes.
 
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
-        // this.scene.start('MainMenu');
-        this.scene.start('Game');
+        this.scene.start('MainMenu');
+        // this.scene.start('Game');
     }
 }

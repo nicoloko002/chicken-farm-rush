@@ -6,10 +6,15 @@ export class EntitiesPlugin extends Phaser.Plugins.ScenePlugin {
   }
 
   boot() {
+    console.log('🟢 Plugin boot() called for scene:', this.scene);
+    this.attachListeners();
+  }
+
+  attachListeners() {
     this.systems.events.on('update', this.update, this);
-    this.systems.events.on('pause', () => this._paused = true);
-    this.systems.events.on('resume', () => this._paused = false);
-    this.systems.events.once('shutdown', this.shutdown, this);
+    this.systems.events.on('pause', () => (this._paused = true));
+    this.systems.events.on('resume', () => (this._paused = false));
+    this.systems.events.once('shutdown', () => this.shutdown());
   }
 
   update(time, delta) {
@@ -48,7 +53,7 @@ export class EntitiesPlugin extends Phaser.Plugins.ScenePlugin {
   }
 
   shutdown() {
+    console.log('🔴 Shutdown called for scene:', this.scene.key);
     this.updateList.clear();
-    this.systems.events.off('update', this.update, this);
   }
 }

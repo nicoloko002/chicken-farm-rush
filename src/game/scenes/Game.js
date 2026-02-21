@@ -13,6 +13,7 @@ import { Score } from '../ui/Score';
 import { Tool } from '../ui/Tool';
 import { ToolManager } from '../ui/ToolManager';
 import { Egg } from '../entities/npcs/pets/Egg';
+import { WormBoss } from '../entities/npcs/enemies/WormBoss';
 
 export class Game extends Scene {
 
@@ -21,6 +22,15 @@ export class Game extends Scene {
     }
 
     create() {
+        const background = this.add.image(0, 0, 'bg6');
+        background.setOrigin(0, 0);
+        background.setDisplaySize(this.cameras.main.width, this.cameras.main.height - 85);
+        background.setTint(0xcccccc);
+
+        const panel = this.add.image(0-this.cameras.main.width*0.032, background.displayHeight*.94, 'panel');
+        panel.setOrigin(0, 0);
+        panel.setDisplaySize(this.cameras.main.width*1.068, this.cameras.main.height*1.075 - background.displayHeight);
+
         this.eggSwallowSound = this.sound.add('bite');
 
         this.foodGroup = this.physics.add.group();
@@ -30,11 +40,13 @@ export class Game extends Scene {
         this.configUi();
         this.configEnemies();
         this.configEffects();
+
+        new WormBoss(this, 500, 300);
     }
 
     configPet() {
         this.chickenGroup = new ChickenGroup(this);
-        this.chickenGroup.add(new Chicken(this, 500, 500));
+        this.chickenGroup.add(new Chicken(this, 500, 620));
 
         this.eggGroup = this.physics.add.group();
 
@@ -44,9 +56,19 @@ export class Game extends Scene {
             }
         });
 
-        EventBus.on('egg:hatched', (egg) => this.chickenGroup.add(new Chicken(this, egg.x, egg.y)))
-        EventBus.on('egg:clicked', (egg) => this.score.incScore(1));
-        EventBus.on('chicken:killed', (chicken) => this.chickenGroup.remove(chicken));
+        EventBus.on('egg:hatched', (egg) => {
+            this.chickenGroup.add(new Chicken(this, egg.x, egg.y));
+            this.chickenCounter.incScore(1);
+        });
+        EventBus.on('egg:clicked', (egg) => {
+            this.score.incScore(1);
+            this.checkEndGame();
+        });
+        EventBus.on('chicken:killed', (chicken) => {
+            this.chickenGroup.remove(chicken);
+            this.chickenCounter.incScore(-1);
+            this.checkEndGame();
+        });
 
         this.physics.add.overlap(this.chickenGroup, this.foodGroup, this.catchFood, null, this);
     }
@@ -54,16 +76,30 @@ export class Game extends Scene {
     configUi() {
         this.uiContainer = this.add.container(0, 0);
         
-        let eggImg = this.add.sprite(40, 725, 'petEgg');
+        const eggImg = this.add.sprite(85, 710, 'petEgg');
         eggImg.setScale(.35);
         eggImg.setRotation(-.6);
         this.uiContainer.add(eggImg);
 
-        this.score = new Score(this, 80, 720);
+        this.score = new Score(this, 125, 705);
         this.score.incScore(6);
         this.uiContainer.add(this.score);
 
+        const chickenImg = this.add.sprite(this.cameras.main.width - 140, 710, 'miniChicken');
+        chickenImg.setScale(.35);
+        this.uiContainer.add(chickenImg);
+
+        this.chickenCounter = new Score(this, this.cameras.main.width - 110, 705);
+        this.chickenCounter.incScore(this.chickenGroup.getLength());
+        this.uiContainer.add(this.chickenCounter);
+
         this.toolManager = new ToolManager(this, this.uiContainer);
+        
+        this.fullScreen = this.add.image(this.cameras.main.width - 50, 50, 'fullScreen')
+            .setInteractive({
+                useHandCursor: true
+            })
+            .on('pointerdown', () => this.scale.toggleFullscreen());
     }
 
     configEnemies() {
@@ -73,7 +109,7 @@ export class Game extends Scene {
         // this.leftSideGenerator.setTimeInterval(1000, 5000);
         this.leftSideGenerator.setTimeInterval(1500, 30000);
         this.leftSideGenerator.setRangeX(0, 0);
-        this.leftSideGenerator.setRangeY(480, 480);
+        this.leftSideGenerator.setRangeY(600, 600);
         this.leftSideGenerator.start();
 
         this.rightSideGenerator = new EnemyGroup(this);
@@ -82,7 +118,7 @@ export class Game extends Scene {
         // this.rightSideGenerator.setTimeInterval(1000, 5000);
         this.rightSideGenerator.setTimeInterval(1500, 30000);
         this.rightSideGenerator.setRangeX(this.cameras.main.width, this.cameras.main.width);
-        this.rightSideGenerator.setRangeY(480, 480);
+        this.rightSideGenerator.setRangeY(600, 600);
         this.rightSideGenerator.start();
 
         EventBus.on('enemyKilled', (enemy) => {
@@ -98,7 +134,7 @@ export class Game extends Scene {
                         repeat: -1
                     },
                     y: {
-                        value: 470,
+                        value: 600,
                         duration: 500,
                         ease: 'linear'
                     }
@@ -143,6 +179,7 @@ export class Game extends Scene {
    collideWithEgg(enemy, egg) {
       this.eggSwallowSound.play();
       egg.kill();
+      this.checkEndGame();
    }
 
     update() {
@@ -156,5 +193,11 @@ export class Game extends Scene {
 
     changeScene() {
         this.scene.start('GameOver');
+    }
+
+    checkEndGame() {
+        if (this.chickenGroup.getLength() === 0) {
+            this.changeScene();
+        }
     }
 }
