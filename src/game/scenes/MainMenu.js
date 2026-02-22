@@ -28,7 +28,7 @@ export class MainMenu extends Scene
         playButton.setInteractive({
             useHandCursor: true
         }).on('pointerup', () => {
-            this.changeScene();
+            this.changeScene('Game');
         });
         this.add.text(160, 112, 'Play', { font: '64px CabinSketch', fill: '#393939', fontFamily: 'CabinSketch' });
 
@@ -37,14 +37,14 @@ export class MainMenu extends Scene
         tutorialButton.setInteractive({
             useHandCursor: true
         }).on('pointerup', () => {
-            this.changeScene();
+            this.changeScene('Tutorial');
         });
         this.add.text(140, 285, 'Tutorial', { font: '50px CabinSketch', fill: '#393939', fontFamily: 'CabinSketch' });
 
         EventBus.emit('current-scene-ready', this);
     }
 
-    changeScene ()
+    changeScene (sceneName)
     {
         if (this.logoTween)
         {
@@ -52,6 +52,6 @@ export class MainMenu extends Scene
             this.logoTween = null;
         }
         this.music.stop();
-        this.scene.start('Game');
+        this.scene.start(sceneName);
     }
 }

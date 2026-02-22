@@ -15,6 +15,14 @@ import { ToolManager } from '../ui/ToolManager';
 import { Egg } from '../entities/npcs/pets/Egg';
 import { WormBoss } from '../entities/npcs/enemies/WormBoss';
 
+const DEPTH_LAYERS = {
+  BACKGROUND: 0,
+  GROUND: 10,
+  PLAYER: 20,
+  ENEMIES: 15,
+  UI: 100
+};
+
 export class Game extends Scene {
 
     constructor() {
@@ -22,6 +30,12 @@ export class Game extends Scene {
     }
 
     create() {
+        // Make sure camera is initialized before using it
+        if (!this.cameras.main) {
+            console.error('Camera not initialized');
+            return;
+        }
+        
         const background = this.add.image(0, 0, 'bg6');
         background.setOrigin(0, 0);
         background.setDisplaySize(this.cameras.main.width, this.cameras.main.height - 85);
@@ -41,12 +55,14 @@ export class Game extends Scene {
         this.configEnemies();
         this.configEffects();
 
-        new WormBoss(this, 500, 300);
+        const boss = new WormBoss(this, 500, 300);
+        boss.instance.setDepth(DEPTH_LAYERS.BACKGROUND);
     }
 
     configPet() {
         this.chickenGroup = new ChickenGroup(this);
         this.chickenGroup.add(new Chicken(this, 500, 620));
+        this.chickenGroup.setDepth(DEPTH_LAYERS.PLAYER);
 
         this.eggGroup = this.physics.add.group();
 
@@ -104,6 +120,7 @@ export class Game extends Scene {
 
     configEnemies() {
         this.leftSideGenerator = new EnemyGroup(this);
+        this.leftSideGenerator.setDepth(DEPTH_LAYERS.ENEMIES);
         this.leftSideGenerator.addEnemyClass(Snake);
         // this.leftSideGenerator.addEnemyClass(Frog);
         // this.leftSideGenerator.setTimeInterval(1000, 5000);
@@ -113,6 +130,7 @@ export class Game extends Scene {
         this.leftSideGenerator.start();
 
         this.rightSideGenerator = new EnemyGroup(this);
+        this.rightSideGenerator.setDepth(DEPTH_LAYERS.ENEMIES);
         this.rightSideGenerator.addEnemyClass(Snake);
         // this.rightSideGenerator.addEnemyClass(Frog);
         // this.rightSideGenerator.setTimeInterval(1000, 5000);

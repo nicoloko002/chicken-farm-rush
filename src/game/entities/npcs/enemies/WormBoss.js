@@ -1,8 +1,8 @@
 export class WormBoss {
     constructor(scene, x, y) {
-        var boss = scene.physics.add.sprite(x, y, 'wormBossSpawn');
-        boss.setOrigin(.5, .5);
-        var spawnAnim = boss.anims.create(
+        this.instance = scene.physics.add.sprite(x, y, 'wormBossSpawn');
+        this.instance.setOrigin(.5, .5);
+        var spawnAnim = this.instance.anims.create(
             {
                 key: 'spawn',
                 frames: scene.anims.generateFrameNumbers('wormBossSpawn', { start: 0, end: 31, first: 0 }),
@@ -10,7 +10,7 @@ export class WormBoss {
                 repeat: 0,
             }
         );
-        boss.anims.create(
+        this.instance.anims.create(
             {
                 key: 'scream',
                 frames: scene.anims.generateFrameNumbers('wormBossScream', { start: 0, end: 31, first: 0 }),
@@ -18,7 +18,7 @@ export class WormBoss {
                 repeat: 2
             }
         );
-        let screamToIddleAnim = boss.anims.create(
+        let screamToIddleAnim = this.instance.anims.create(
             {
                 key: 'screamToIddle',
                 frames: scene.anims.generateFrameNumbers('wormBossScreamToIddle', { start: 0, end: 39, first: 0 }),
@@ -26,7 +26,7 @@ export class WormBoss {
                 repeat: 0
             }
         );
-        boss.anims.create(
+        this.instance.anims.create(
             {
                 key: 'iddle',
                 frames: scene.anims.generateFrameNumbers('wormBossIddle', { start: 0, end: 63, first: 0 }),
@@ -34,7 +34,7 @@ export class WormBoss {
                 repeat: 0
             }
         );
-        boss.anims.create(
+        this.instance.anims.create(
             {
                 key: 'screamToIddleReverse',
                 frames: scene.anims.generateFrameNumbers('wormBossScreamToIddle', { start: 39, end: 0, first: 39 }),
@@ -42,7 +42,7 @@ export class WormBoss {
                 repeat: 0
             }
         );
-        boss.anims.create(
+        this.instance.anims.create(
             {
                 key: 'spawnReverse',
                 frames: scene.anims.generateFrameNumbers('wormBossSpawn', { start: 31, end: 0, first: 31 }),
@@ -50,12 +50,12 @@ export class WormBoss {
                 repeat: 0,
                 onComplete: () =>
                 {
-                    boss.chain(['scream', 'screamToIddle', 'iddle', 'screamToIddleReverse', 'spawnReverse']);
-                    boss.anims.play('spawn');
+                    this.instance.chain(['scream', 'screamToIddle', 'iddle', 'screamToIddleReverse', 'spawnReverse']);
+                    this.instance.anims.play('spawnReverse');
                 }
             }
         );
-        boss.chain(['scream', 'screamToIddle', 'iddle', 'screamToIddleReverse', 'spawnReverse']);
-        boss.anims.play('spawn');
+        this.instance.chain(['scream', 'screamToIddle', 'iddle', 'screamToIddleReverse', 'spawnReverse']);
+        this.instance.anims.play('spawn');
     }
 }

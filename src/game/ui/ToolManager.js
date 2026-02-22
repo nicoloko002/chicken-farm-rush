@@ -90,4 +90,35 @@ export class ToolManager {
     deselectButtons() {
         this.uiContainer.iterate((item) => item instanceof Tool && item != this.currentTool && item.deselect());
     }
+
+    getToolPosition(toolName) {
+        let tool = null;
+
+        switch(toolName.toLowerCase()) {
+            case 'hand':
+                tool = this.hand;
+                break;
+            case 'stick':
+                tool = this.stick;
+                break;
+            case 'bulletegg':
+                tool = this.bulletegg;
+                break;
+            case 'minegg':
+                tool = this.minegg;
+                break;
+            case 'empeggranade':
+                tool = this.empEggranade;
+                break;
+            default:
+                return null;
+        }
+
+        if (!tool) return null;
+
+        return {
+            x: tool.x + tool.list[0].displayWidth / 4,
+            y: tool.y + 25
+        };
+    }
 }

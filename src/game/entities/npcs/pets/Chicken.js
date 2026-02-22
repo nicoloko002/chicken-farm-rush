@@ -145,10 +145,14 @@ export class Chicken {
    }
 
    pointerInteraction(pointer) {
-      if (this.stateMachine.currentState instanceof JumpingState) 
+      if (this.stateMachine.currentState instanceof JumpingState) {
+         EventBus.emit('chicken:movementStopped', this);
          this.stateMachine.transition('iddle', this);
-      else
+      }
+      else {
+         EventBus.emit('chicken:fastJumpingStarted', this);
          this.stateMachine.transition('fastJumping', this, { direction: pointer.position.x > this.instance.getCenter().x ? -1 : 1 });
+      }
    }
 
    setActive(value) {

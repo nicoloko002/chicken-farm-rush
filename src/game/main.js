@@ -5,6 +5,8 @@ import { MainMenu } from './scenes/MainMenu';
 import Phaser from 'phaser';
 import { Preloader } from './scenes/Preloader';
 import { EntitiesPlugin } from './EntitiesPlugin';
+import { Tutorial } from './scenes/Tutorial';
+import { TutorialUI } from './scenes/TutorialUi';
 
 // Find out more information about the Game Config at:
 // https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
@@ -31,6 +33,8 @@ const config = {
         Boot,
         Preloader,
         MainMenu,
+        Tutorial,
+        TutorialUI,
         Game,
         GameOver
     ],
